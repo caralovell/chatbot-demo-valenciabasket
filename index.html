@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Pam IA · Valencia Basket</title>
+
+<style>
+:root{
+  --bg:#0b0f1a;
+  --stroke:rgba(255,255,255,.12);
+  --text:rgba(255,255,255,.92);
+  --orange:#F36F21;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background:
+    radial-gradient(900px 500px at 20% 10%, rgba(243,111,33,.25), transparent 55%),
+    radial-gradient(700px 450px at 90% 20%, rgba(243,111,33,.15), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.app{
+  width:min(560px, 100%);
+  border:1px solid var(--stroke);
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow: 0 18px 55px rgba(0,0,0,.45);
+}
+
+header{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  padding:18px;
+  border-bottom:1px solid var(--stroke);
+  background:rgba(0,0,0,.15);
+}
+
+.avatar{
+  width:60px;
+  height:60px;
+  border-radius:16px;
+  overflow:hidden;
+  border:2px solid var(--orange);
+  box-shadow: 0 0 25px rgba(243,111,33,.35);
+  flex:0 0 auto;
+}
+
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.title b{
+  display:block;
+  font-size:17px;
+  letter-spacing:.3px;
+}
+
+.chat{
+  padding:16px;
+  height:55vh;
+  max-height:520px;
+  overflow:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.msg{
+  max-width:88%;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.06);
+  font-size:14px;
+  line-height:1.4;
+  white-space:pre-wrap;
+}
+
+.bot{
+  border-top-left-radius:6px;
+}
+
+.user{
+  margin-left:auto;
+  background:rgba(243,111,33,.18);
+  border-color:rgba(243,111,33,.4);
+  border-top-right-radius:6px;
+}
+
+.quick{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:0 16px 16px;
+}
+
+.qbtn{
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.05);
+  color:white;
+  padding:9px 12px;
+  border-radius:999px;
+  font-size:12px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.qbtn:hover{
+  background:rgba(243,111,33,.25);
+}
+
+footer{
+  display:flex;
+  gap:10px;
+  padding:16px;
+  border-top:1px solid var(--stroke);
+  background:rgba(0,0,0,.15);
+}
+
+input{
+  flex:1;
+  padding:12px;
+  border-radius:14px;
+  border:1px solid var(--stroke);
+  background:rgba(255,255,255,.05);
+  color:white;
+  outline:none;
+}
+
+button.send{
+  padding:12px 16px;
+  border-radius:14px;
+  border:none;
+  background:var(--orange);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  transition:.2s;
+}
+
+button.send:hover{
+  background:#d85f1c;
+  transform:translateY(-1px);
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header>
+  <div class="avatar">
+    <img src="pam.png" alt="Pam · Mascota Valencia Basket">
+  </div>
+  <div class="title">
+    <b>Pam IA · Valencia Basket</b>
+  </div>
+</header>
+
+<div class="chat" id="chat">
+  <div class="msg bot">
+Soy Pam, la mascota oficial del Valencia Basket 🏀  
+
+¿En qué puedo ayudarte?
+  </div>
+</div>
+
+<div class="quick">
+  <button class="qbtn" data-q="Dame un resumen del partido">🏀 Resumen</button>
+  <button class="qbtn" data-q="¿Qué highlights hay hoy?">✨ Highlights</button>
+  <button class="qbtn" data-q="Recomiéndame gente para hacer networking">🤝 Networking</button>
+  <button class="qbtn" data-q="¿Dónde está la zona VIP?">🎟️ Zona VIP</button>
+</div>
+
+<footer>
+  <input id="inp" placeholder="Escribe tu mensaje..." autocomplete="off" />
+  <button class="send" id="send">Enviar</button>
+</footer>
+
+</div>
+
+<script>
+const chat = document.getElementById('chat');
+const inp = document.getElementById('inp');
+const send = document.getElementById('send');
+
+const respuestas = {
+  resumen: "Hoy el equipo salió intenso desde el inicio y cerró el partido con una gran defensa en el último cuarto.",
+  highlights: "Highlights del partido:\n• Triple en transición\n• Alley-oop espectacular\n• Tapón decisivo\n• Jugada de pizarra perfecta",
+  networking: "En la zona VIP puedo recomendarte perfiles afines a tu sector para hacer networking.",
+  vip: "La zona VIP está señalizada desde la entrada principal. Llega con tiempo para disfrutar del entorno."
+};
+
+function addMsg(text, tipo="bot"){
+  const div = document.createElement('div');
+  div.className = `msg ${tipo}`;
+  div.textContent = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function responder(texto){
+  const t = texto.toLowerCase();
+
+  if(t.includes("resumen")) return respuestas.resumen;
+  if(t.includes("highlight")) return respuestas.highlights;
+  if(t.includes("network")) return respuestas.networking;
+  if(t.includes("vip") || t.includes("zona")) return respuestas.vip;
+
+  return "Estoy aquí para ayudarte con información del partido o la experiencia VIP.";
+}
+
+function enviar(){
+  const texto = inp.value.trim();
+  if(!texto) return;
+  addMsg(texto,"user");
+  inp.value="";
+  setTimeout(()=>addMsg(responder(texto),"bot"),400);
+}
+
+send.addEventListener("click", enviar);
+inp.addEventListener("keydown", e=>{
+  if(e.key==="Enter") enviar();
+});
+
+document.querySelectorAll(".qbtn").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    addMsg(btn.dataset.q,"user");
+    setTimeout(()=>addMsg(responder(btn.dataset.q),"bot"),400);
+  });
+});
+</script>
+
+</body>
+</html>
