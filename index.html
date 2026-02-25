@@ -14,6 +14,7 @@
 }
 
 *{box-sizing:border-box}
+html, body{height:100%;}
 
 body{
   margin:0;
@@ -23,7 +24,13 @@ body{
     radial-gradient(700px 450px at 90% 20%, rgba(243,111,33,.15), transparent 60%),
     var(--bg);
   color:var(--text);
-  min-height:100vh;
+
+  /* ✅ móvil: evita “deslice” de la página */
+  min-height:100dvh;          /* mejor que 100vh */
+  overflow:hidden;            /* NO scroll en body */
+  overscroll-behavior:none;   /* sin rebote */
+  touch-action:manipulation;
+
   display:flex;
   align-items:center;
   justify-content:center;
@@ -31,12 +38,21 @@ body{
 }
 
 .app{
-  width:min(560px, 100%);
+  width:100%;
+  max-width:560px;
+
   border:1px solid var(--stroke);
   background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
   border-radius:22px;
-  overflow:hidden;
+  overflow:hidden; /* ✅ nada se sale */
   box-shadow: 0 18px 55px rgba(0,0,0,.45);
+
+  /* ✅ layout estable: header + chat + quick + footer */
+  display:flex;
+  flex-direction:column;
+
+  /* ✅ que no exceda el alto visible del móvil */
+  max-height:calc(100dvh - 36px); /* padding 18*2 */
 }
 
 header{
@@ -46,6 +62,7 @@ header{
   padding:18px;
   border-bottom:1px solid var(--stroke);
   background:rgba(0,0,0,.15);
+  flex:0 0 auto;
 }
 
 .avatar{
@@ -72,12 +89,17 @@ header{
 
 .chat{
   padding:16px;
-  height:55vh;
-  max-height:520px;
   overflow:auto;
   display:flex;
   flex-direction:column;
   gap:12px;
+
+  /* ✅ el chat ocupa el espacio sobrante sin empujar la página */
+  flex:1 1 auto;
+
+  /* ✅ scroll suave y sin “arrastrar” el body */
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
 }
 
 .msg{
@@ -107,6 +129,7 @@ header{
   gap:8px;
   flex-wrap:wrap;
   padding:0 16px 16px;
+  flex:0 0 auto;
 }
 
 .qbtn{
@@ -130,6 +153,7 @@ footer{
   padding:16px;
   border-top:1px solid var(--stroke);
   background:rgba(0,0,0,.15);
+  flex:0 0 auto;
 }
 
 input{
@@ -140,6 +164,7 @@ input{
   background:rgba(255,255,255,.05);
   color:white;
   outline:none;
+  min-width:0; /* ✅ evita overflow horizontal en móviles */
 }
 
 button.send{
@@ -151,6 +176,7 @@ button.send{
   font-weight:700;
   cursor:pointer;
   transition:.2s;
+  white-space:nowrap;
 }
 
 button.send:hover{
