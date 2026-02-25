@@ -14,27 +14,38 @@
 }
 
 *{box-sizing:border-box}
-html, body{height:100%;}
+
+/* ✅ Bloqueo total del scroll de página (iOS/webview safe) */
+html, body{
+  height:100%;
+  margin:0;
+  overflow:hidden;
+  overscroll-behavior:none;
+}
 
 body{
-  margin:0;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  position:fixed;
+  inset:0;
+  width:100%;
   background:
     radial-gradient(900px 500px at 20% 10%, rgba(243,111,33,.25), transparent 55%),
     radial-gradient(700px 450px at 90% 20%, rgba(243,111,33,.15), transparent 60%),
     var(--bg);
   color:var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
 
-  /* ✅ móvil: evita “deslice” de la página */
-  min-height:100dvh;          /* mejor que 100vh */
-  overflow:hidden;            /* NO scroll en body */
-  overscroll-behavior:none;   /* sin rebote */
-  touch-action:manipulation;
-
+/* ✅ Contenedor fijo centrado, sin arrastre */
+.viewport{
+  position:fixed;
+  inset:0;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:18px;
+  overflow:hidden;
+  overscroll-behavior:none;
+  touch-action:manipulation;
 }
 
 .app{
@@ -44,15 +55,14 @@ body{
   border:1px solid var(--stroke);
   background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
   border-radius:22px;
-  overflow:hidden; /* ✅ nada se sale */
+  overflow:hidden;
   box-shadow: 0 18px 55px rgba(0,0,0,.45);
 
-  /* ✅ layout estable: header + chat + quick + footer */
   display:flex;
   flex-direction:column;
 
-  /* ✅ que no exceda el alto visible del móvil */
-  max-height:calc(100dvh - 36px); /* padding 18*2 */
+  /* ✅ no exceder pantalla (padding 18*2) */
+  max-height:calc(100dvh - 36px);
 }
 
 header{
@@ -93,11 +103,9 @@ header{
   display:flex;
   flex-direction:column;
   gap:12px;
-
-  /* ✅ el chat ocupa el espacio sobrante sin empujar la página */
   flex:1 1 auto;
 
-  /* ✅ scroll suave y sin “arrastrar” el body */
+  /* ✅ el rebote se queda aquí, no en la página */
   overscroll-behavior:contain;
   -webkit-overflow-scrolling:touch;
 }
@@ -164,7 +172,7 @@ input{
   background:rgba(255,255,255,.05);
   color:white;
   outline:none;
-  min-width:0; /* ✅ evita overflow horizontal en móviles */
+  min-width:0; /* ✅ evita overflow horizontal */
 }
 
 button.send{
@@ -187,38 +195,40 @@ button.send:hover{
 </head>
 
 <body>
-<div class="app">
+  <div class="viewport">
+    <div class="app">
 
-<header>
-  <div class="avatar">
-    <img src="mascota.png" alt="Pam · Mascota Valencia Basket">
-  </div>
-  <div class="title">
-    <b>Pam IA · Valencia Basket</b>
-  </div>
-</header>
+      <header>
+        <div class="avatar">
+          <img src="mascota.png" alt="Pam · Mascota Valencia Basket">
+        </div>
+        <div class="title">
+          <b>Pam IA · Valencia Basket</b>
+        </div>
+      </header>
 
-<div class="chat" id="chat">
-  <div class="msg bot">
+      <div class="chat" id="chat">
+        <div class="msg bot">
 Soy Pam, la mascota oficial del Valencia Basket 🏀  
 
 ¿En qué puedo ayudarte?
+        </div>
+      </div>
+
+      <div class="quick">
+        <button class="qbtn" data-q="Dame un resumen del partido">🏀 Resumen</button>
+        <button class="qbtn" data-q="¿Qué highlights hay hoy?">✨ Highlights</button>
+        <button class="qbtn" data-q="Recomiéndame gente para hacer networking">🤝 Networking</button>
+        <button class="qbtn" data-q="¿Dónde está la zona VIP?">🎟️ Zona VIP</button>
+      </div>
+
+      <footer>
+        <input id="inp" placeholder="Escribe tu mensaje..." autocomplete="off" />
+        <button class="send" id="send">Enviar</button>
+      </footer>
+
+    </div>
   </div>
-</div>
-
-<div class="quick">
-  <button class="qbtn" data-q="Dame un resumen del partido">🏀 Resumen</button>
-  <button class="qbtn" data-q="¿Qué highlights hay hoy?">✨ Highlights</button>
-  <button class="qbtn" data-q="Recomiéndame gente para hacer networking">🤝 Networking</button>
-  <button class="qbtn" data-q="¿Dónde está la zona VIP?">🎟️ Zona VIP</button>
-</div>
-
-<footer>
-  <input id="inp" placeholder="Escribe tu mensaje..." autocomplete="off" />
-  <button class="send" id="send">Enviar</button>
-</footer>
-
-</div>
 
 <script>
 const chat = document.getElementById('chat');
